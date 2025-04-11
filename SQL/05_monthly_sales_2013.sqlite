@@ -1,0 +1,11 @@
+SELECT 
+    STRFTIME('%Y-%m', InvoiceDate) AS Month,
+    ROUND(SUM(Total), 2) AS MonthlySales
+FROM 
+    Invoice
+WHERE 
+    STRFTIME('%Y', InvoiceDate) = '2013'
+GROUP BY 
+    Month
+ORDER BY 
+    Month;

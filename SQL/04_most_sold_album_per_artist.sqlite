@@ -1,0 +1,36 @@
+SELECT 
+    a.Name AS Artist,
+    al.Title AS Album,
+    COUNT(il.InvoiceLineId) AS TracksSold
+FROM 
+    InvoiceLine il
+JOIN 
+    Track t ON il.TrackId = t.TrackId
+JOIN 
+    Album al ON t.AlbumId = al.AlbumId
+JOIN 
+    Artist a ON al.ArtistId = a.ArtistId
+GROUP BY 
+    a.ArtistId, al.AlbumId
+HAVING 
+    COUNT(il.InvoiceLineId) = (
+        SELECT 
+            MAX(TrackCount)
+        FROM (
+            SELECT 
+                al2.ArtistId,
+                COUNT(il2.InvoiceLineId) AS TrackCount
+            FROM 
+                InvoiceLine il2
+            JOIN 
+                Track t2 ON il2.TrackId = t2.TrackId
+            JOIN 
+                Album al2 ON t2.AlbumId = al2.AlbumId
+            GROUP BY 
+                al2.ArtistId, al2.AlbumId
+            HAVING 
+                al2.ArtistId = a.ArtistId
+        )
+    )
+ORDER BY 
+    Artist;
